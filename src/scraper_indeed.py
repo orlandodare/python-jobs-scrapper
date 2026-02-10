@@ -1,6 +1,7 @@
 from selenium.webdriver.common.by import By
 import time
 import random
+from src.utils import human_delay, simulate_human_interaction
 
 
 def extract_jobs_from_page(driver):
@@ -8,14 +9,10 @@ def extract_jobs_from_page(driver):
     Scans the current Indeed page and extracts job titles, URLs and companies
     """
     # 1. Behavior: Random human-like delays
-    wait_time = random.uniform(8.5, 15.2)
-    print(f"Security wait : {round(wait_time, 2)} seconds...")
-    time.sleep(wait_time)
+    human_delay(8.5, 15.2)
 
-    # 2. Behavior: Random scroll to trigger lazy loading
-    pixel_scroll = random.randint(300, 700)
-    driver.execute_script(f"window.scrollTo(0, {pixel_scroll});")
-    time.sleep(random.uniform(1.0, 2.0))
+    # 2. Behavior: Random scroll and mouse movement to trigger lazy loading
+    simulate_human_interaction(driver)
     
     jobs_found = []
 
