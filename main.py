@@ -2,10 +2,10 @@ from src.browser_factory import get_driver
 from src.job_list_manager import load_known_urls, save_jobs
 from src.scraper_indeed import extract_jobs_from_page
 from src.filter_manager import job_check_new
-import time
+from src.utils import human_delay, simulate_human_interaction
 import json
 import os
-import random
+
 
 def load_config():
     """Loads configuration from JSON file."""
@@ -34,15 +34,21 @@ def main():
             print(f"Scraping Indeed page {change_page // 10 +1}...")
             url = f"https://be.indeed.com/jobs?q=&l=Li%C3%A8ge&sort=date&start={change_page}"
 
-            driver.get(url)
+            # Add a referer
+            driver.execute_script(f"window.location.href = 'https://be.indeed.com/jobs?q=&l=Li%C3%A8ge&sort=date&start={change_page-10}';")
 
+            driver.get(url)
+            
             # Load all the jobs available from the page
             jobs_found = extract_jobs_from_page(driver)
+
 
             # Check if jobs are found otherwise stop the loop
             if not jobs_found:
                 print("No jobs found or blocked by Cloudflare.")
                 break
+            
+            simulate_human_interaction(driver)
 
             # Filter logic : keeps only new and relevant jobs based on criteria written in config.json
             relevant_jobs, new_jobs = job_check_new(jobs_found, jobs_set, config)
@@ -66,7 +72,7 @@ def main():
             consecutive_duplicates = len(jobs_found) - len(new_jobs)
 
             change_page += 10
-            time.sleep(random.uniform(2, 4))
+            human_delay(10, 25)
 
     except Exception as e :
         print(f"An error as occurred: {e}")
