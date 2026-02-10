@@ -4,6 +4,7 @@ from selenium_stealth import stealth
 
 
 
+
 def get_driver():
     """
     Initializes and returns customized undetected-chromedriver with stealth settings.
@@ -19,11 +20,8 @@ def get_driver():
     options.add_argument("--window-size=1920,1080")
 
     # Initializes driver (auto-detects Chrome version for better portability)
-    try: 
-        driver = uc.Chrome(options=options)
-    except Exception:
-        #Fallback if auto-detection fails
-        ddriver = uc.Chrome(options=options, use_subprocess=True)
+    driver = uc.Chrome(options=options, version_main=144)
+    
 
     # Selenium-Stealth : Deep masking of browser fingerprints
     stealth(driver,
