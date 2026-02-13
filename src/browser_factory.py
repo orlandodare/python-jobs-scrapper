@@ -1,7 +1,7 @@
 
 import undetected_chromedriver as uc
 from selenium_stealth import stealth
-
+from pathlib import Path
 
 
 
@@ -11,6 +11,19 @@ def get_driver():
     """
     
     options = uc.ChromeOptions()
+
+    # Create a directory to store chrome session
+    project_dir = Path(__file__).parent.parent
+    profile_dir = project_dir / "chrome_profile"
+    profile_dir.mkdir(exist_ok=True)
+
+    # Tel to chrome to use this directory
+    options.add_argument(f"--user-data-dir={profile_dir}")
+    options.add_argument("--profile-directory=Default")
+
+    # Unable some securities to avois CORS error
+    options.add_argument("--disable-web-security")
+    options.add_argument("--allow-running-insecure-content")
 
     # Standard anti-detection arguments
     options.add_argument("--disable-infobars")
